@@ -7,7 +7,7 @@ from src.sort import quicksort, merge_sort
 
 # Constantes
 NUM_JOGADORES = 18944
-#NUM_USUARIOS = 9642  # pro minirating de 10k
+# NUM_USUARIOS = 9642  # pro minirating de 10k
 # NUM_USUARIOS = 138425  # pro rating de 1M
 NUM_USUARIOS = 138493  # pro rating de 10M / 24M
 NUM_TAGS = 937
@@ -51,24 +51,27 @@ class FIFA_Database:
                     lastIdChecked = sofifa_id
 
                     player = self.players_HT.get(sofifa_id)
-                    player.soma_notas += rating
-                    player.num_avaliacoes += 1
+                    if player is not None:
+                        player.soma_notas += rating
+                        player.num_avaliacoes += 1
 
                 else:
-                    player.soma_notas += rating
-                    player.num_avaliacoes += 1
+                    if player is not None:
+                        player.soma_notas += rating
+                        player.num_avaliacoes += 1
 
                 user = self.users_HT.get(user_id)
 
                 if user is None:
-                    self.users_HT.insert(Usuario(user_id, [(sofifa_id, rating)]))
+                    self.users_HT.insert(
+                        Usuario(user_id, [(sofifa_id, rating)]))
                 else:
                     user.avaliacoes.append((sofifa_id, rating))
 
-        print("Tabela Hash de usuários construída.")
+            print("Tabela Hash de usuários construída.")
 
-        self._update_global_ratings()
-        print("Médias globais atualizadas.")
+            self._update_global_ratings()
+            print("Médias globais atualizadas.")
 
     def get_tags_info(self, filename='data/tags.csv'):
         with open(filename, 'r') as file:
@@ -89,7 +92,8 @@ class FIFA_Database:
         for lista in self.players_HT.table:
             for jogador in lista:
                 if jogador.num_avaliacoes != 0:
-                    jogador.media_global = round((jogador.soma_notas / jogador.num_avaliacoes), 6)
+                    jogador.media_global = round(
+                        (jogador.soma_notas / jogador.num_avaliacoes), 6)
 
     # ----------------------------------------- Pesquisas ----------------------------------------- #
 
@@ -115,7 +119,7 @@ class FIFA_Database:
 
     def top_by_position(self, n, position):
         players = [jogador for lista in self.players_HT.table for jogador in lista
-                                if position in jogador.posicoes and jogador.num_avaliacoes > 1000]
+                   if position in jogador.posicoes and jogador.num_avaliacoes > 1000]
 
         return quicksort(players)[:n]
 
@@ -123,27 +127,27 @@ class FIFA_Database:
         user = self.users_HT.get(user_id)
 
         # Crie uma lista de tuplas (Jogador, rating) com as avaliações do usuário
-        tuplas = [(self.players_HT.get(sofifa_id), rating) for sofifa_id, rating in user.avaliacoes]
+        tuplas = [(self.players_HT.get(sofifa_id), rating)
+                  for sofifa_id, rating in user.avaliacoes]
 
         return merge_sort(tuplas)[:20]
 
-    
     def top_by_club(self, club):
         players = [jogador for lista in self.players_HT.table for jogador in lista
-                                if club == jogador.clube and jogador.num_avaliacoes > 1000]
+                   if club == jogador.clube and jogador.num_avaliacoes > 1000]
 
         return quicksort(players)
-    
+
     def top_by_nationality(self, nationality):
         players = [jogador for lista in self.players_HT.table for jogador in lista
-                                if nationality == jogador.nacionalidade and jogador.num_avaliacoes > 1000]
-        
+                   if nationality == jogador.nacionalidade and jogador.num_avaliacoes > 1000]
+
         return quicksort(players)
-    
+
     def top_by_league(self, league):
         players = [jogador for lista in self.players_HT.table for jogador in lista
-                                if league == jogador.liga and jogador.num_avaliacoes > 1000]
-        
+                   if league == jogador.liga and jogador.num_avaliacoes > 1000]
+
         return quicksort(players)
 
 
@@ -215,7 +219,6 @@ def main():
     print("20 jogadores mais bem avaliados pelo usuário '106180':")
     for player, rating in fifa_db.top_by_user('106180'):
         print(f"{player}, {rating}")
-
 
 
 if __name__ == '__main__':

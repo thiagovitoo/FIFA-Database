@@ -17,7 +17,8 @@ def insertion_sort(lst: list[Jogador]) -> list[Jogador]:
         key = lst[i]
         j = i - 1
 
-        while j >= 0 and key.media_global > lst[j].media_global:  # change to '<' for ascending order
+        # change to '<' for ascending order
+        while j >= 0 and key.media_global > lst[j].media_global:
             lst[j + 1] = lst[j]
             j -= 1
 
@@ -64,11 +65,11 @@ def partition(lst, first, last):
 def median_of_3(lst, first, last):
     middle = (first + last) // 2
 
-    candidates = [(lst[first].media_global, first), (lst[middle].media_global, middle), (lst[last].media_global, last)]
+    candidates = [(lst[first].media_global, first),
+                  (lst[middle].media_global, middle), (lst[last].media_global, last)]
     candidates.sort(key=lambda x: x[0], reverse=True)
 
     return candidates[1]
-
 
 
 def merge_sort(lst: list[tuple[Jogador, float]]) -> list[tuple[Jogador, float]]:
@@ -87,6 +88,7 @@ def merge_sort(lst: list[tuple[Jogador, float]]) -> list[tuple[Jogador, float]]:
     right = merge_sort(lst[mid:])
 
     return merge(left, right)
+
 
 def merge(left, right):
     result = []
